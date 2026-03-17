@@ -3,96 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARIGO • Mauritius Taxi Pro</title>
+<title>ARIGO Taxi Mauritius PRO</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
-body {
-  margin:0;
-  font-family: 'Inter', sans-serif;
-  background:#f4f7fb;
-}
-
-header {
-  background:#0f2b45;
-  color:white;
-  padding:15px 25px;
-  font-size:22px;
-  font-weight:700;
-}
+body {margin:0;font-family:sans-serif;background:#f5f7fb;}
+header {background:#0f2b45;color:white;padding:15px;font-size:20px;font-weight:bold;}
 
 .container {
   display:grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns:2fr 1fr;
   gap:20px;
   padding:20px;
 }
 
-#map {
-  height:80vh;
-  border-radius:20px;
-}
+#map {height:80vh;border-radius:20px;}
 
 .panel {
   background:white;
-  border-radius:20px;
   padding:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
-.title {
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:15px;
-}
+.route {background:#eef3f8;padding:15px;border-radius:15px;margin-bottom:15px;}
+.price {font-size:26px;font-weight:bold;margin-top:10px;}
 
-.route {
-  background:#eef3f8;
-  padding:15px;
-  border-radius:15px;
-  margin-bottom:20px;
-}
-
-.route span {
-  display:block;
-  margin:5px 0;
-}
-
-.price {
-  font-size:28px;
-  font-weight:800;
-  color:#0f2b45;
-  margin-top:10px;
-}
-
-.passengers {
-  display:flex;
-  gap:10px;
-  margin:15px 0;
-}
-
+.passengers {display:flex;gap:10px;margin:10px 0;}
 .passengers div {
   flex:1;
   text-align:center;
   padding:10px;
-  border-radius:10px;
   border:1px solid #ccc;
+  border-radius:10px;
   cursor:pointer;
 }
+.active {background:#0f2b45;color:white;}
 
-.passengers .active {
-  background:#0f2b45;
-  color:white;
-}
-
-input {
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #ccc;
-  margin-bottom:15px;
-}
+input {width:100%;padding:10px;margin:10px 0;border-radius:10px;border:1px solid #ccc;}
 
 button {
   width:100%;
@@ -101,33 +50,27 @@ button {
   border-radius:30px;
   background:#25D366;
   color:white;
-  font-size:18px;
-  font-weight:700;
-  cursor:pointer;
+  font-size:16px;
+  font-weight:bold;
 }
 
 @media(max-width:900px){
-  .container{
-    grid-template-columns:1fr;
-  }
+  .container{grid-template-columns:1fr;}
 }
 </style>
 </head>
 
 <body>
 
-<header>ARIGO 🚖 Mauritius Taxi (PRO)</header>
+<header>ARIGO 🚖 Mauritius Taxi PRO</header>
 
 <div class="container">
-  
   <div id="map"></div>
 
   <div class="panel">
-    <div class="title">Book your ride</div>
-
     <div class="route">
-      <span><b>Pickup:</b> <span id="pickup">Not selected</span></span>
-      <span><b>Dropoff:</b> <span id="dropoff">Not selected</span></span>
+      <div><b>Pickup:</b> <span id="pickup">Not selected</span></div>
+      <div><b>Dropoff:</b> <span id="dropoff">Not selected</span></div>
       <div class="price" id="price">—</div>
     </div>
 
@@ -140,11 +83,28 @@ button {
 
     <button onclick="book()">Book via WhatsApp</button>
   </div>
-
 </div>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <script>
-let map;
+let map = L.map('map').setView([-20.28,57.57],10);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:19
+}).addTo(map);
+
+// generate 400 taxis
+for(let i=0;i<400;i++){
+  let lat=-20.6+Math.random()*0.8;
+  let lng=57.3+Math.random()*0.8;
+
+  L.circleMarker([lat,lng],{
+    radius:5,
+    color:"yellow"
+  }).addTo(map);
+}
+
 let pickup=null;
 let dropoff=null;
 let pax=4;
@@ -157,55 +117,40 @@ function setPax(n){
   calculate();
 }
 
-function initMap(){
-  map=new google.maps.Map(document.getElementById("map"),{
-    center:{lat:-20.28,lng:57.57},
-    zoom:10
-  });
+map.on('click', function(e){
+  if(!pickup){
+    pickup=e.latlng;
+    document.getElementById("pickup").innerText=
+      pickup.lat.toFixed(3)+","+pickup.lng.toFixed(3);
 
-  // generate 400 taxis
-  for(let i=0;i<400;i++){
-    new google.maps.Marker({
-      position:{
-        lat:-20.6+Math.random()*0.8,
-        lng:57.3+Math.random()*0.8
-      },
-      map:map,
-      icon:{
-        url:"https://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
-      }
-    });
+    L.marker(pickup).addTo(map);
   }
+  else if(!dropoff){
+    dropoff=e.latlng;
+    document.getElementById("dropoff").innerText=
+      dropoff.lat.toFixed(3)+","+dropoff.lng.toFixed(3);
 
-  map.addListener("click",(e)=>{
-    if(!pickup){
-      pickup=e.latLng;
-      document.getElementById("pickup").innerText=
-        pickup.lat().toFixed(3)+","+pickup.lng().toFixed(3);
-    } else if(!dropoff){
-      dropoff=e.latLng;
-      document.getElementById("dropoff").innerText=
-        dropoff.lat().toFixed(3)+","+dropoff.lng().toFixed(3);
-    } else {
-      pickup=e.latLng;
-      dropoff=null;
-      document.getElementById("pickup").innerText=
-        pickup.lat().toFixed(3)+","+pickup.lng().toFixed(3);
-      document.getElementById("dropoff").innerText="Not selected";
-      document.getElementById("price").innerText="—";
-    }
-    calculate();
-  });
-}
+    L.marker(dropoff).addTo(map);
+  }
+  else{
+    pickup=e.latlng;
+    dropoff=null;
+    document.getElementById("pickup").innerText=
+      pickup.lat.toFixed(3)+","+pickup.lng.toFixed(3);
+    document.getElementById("dropoff").innerText="Not selected";
+    document.getElementById("price").innerText="—";
+  }
+  calculate();
+});
 
 function distance(a,b){
   const R=6371;
-  const dLat=(b.lat()-a.lat())*Math.PI/180;
-  const dLon=(b.lng()-a.lng())*Math.PI/180;
+  const dLat=(b.lat-a.lat)*Math.PI/180;
+  const dLon=(b.lng-a.lng)*Math.PI/180;
   const x=Math.sin(dLat/2)**2+
-  Math.cos(a.lat()*Math.PI/180)*
-  Math.cos(b.lat()*Math.PI/180)*
-  Math.sin(dLon/2)**2;
+    Math.cos(a.lat*Math.PI/180)*
+    Math.cos(b.lat*Math.PI/180)*
+    Math.sin(dLon/2)**2;
   return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
 }
 
@@ -243,8 +188,6 @@ Price: ${price}`;
   window.open("https://wa.me/23059237053?text="+encodeURIComponent(msg));
 }
 </script>
-
-<script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
 
 </body>
 </html>
