@@ -1,199 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARIGO</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-<style>
-body {
-  margin:0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background:#0b1220;
-  color:white;
-}
-
-/* layout */
-#map {
-  position:absolute;
-  top:0;
-  bottom:0;
-  width:100%;
-  z-index:1;
-}
-
-/* glass panel */
-.panel {
-  position:absolute;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  width:95%;
-  max-width:500px;
-  background:rgba(20,30,50,0.85);
-  backdrop-filter: blur(20px);
-  border-radius:25px;
-  padding:20px;
-  z-index:2;
-  box-shadow:0 20px 60px rgba(0,0,0,0.5);
-}
-
-/* header */
-.title {
-  font-size:18px;
-  font-weight:600;
-  opacity:0.8;
-  margin-bottom:10px;
-}
-
-/* route display */
-.route {
-  font-size:14px;
-  opacity:0.9;
-}
-
-.price {
-  font-size:28px;
-  font-weight:700;
-  margin-top:10px;
-  display:none;
-}
-
-/* button */
-button {
-  width:100%;
-  margin-top:15px;
-  padding:14px;
-  border:none;
-  border-radius:30px;
-  background:#25D366;
-  color:white;
-  font-size:16px;
-  font-weight:600;
-}
-
-/* taxi dots */
-.taxi {
-  width:6px;
-  height:6px;
-  background:#ffd54f;
-  border-radius:50%;
-  opacity:0.7;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mauritius Taxi Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        #map {
+            height: 250px;
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #e9e9e9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .geo-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-top: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .vehicle-options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .vehicle-options label {
+            font-weight: normal;
+            cursor: pointer;
+        }
+        .price-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background: #eafaf1;
+            border-radius: 5px;
+        }
+        .whatsapp-btn {
+            display: block;
+            width: 100%;
+            background-color: #25D366;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .whatsapp-btn:hover {
+            background-color: #1ebe5d;
+        }
+    </style>
 </head>
-
 <body>
 
-<div id="map"></div>
+<div class="container">
+    <h2>Book Your Ride</h2>
+    
+    <div id="map"></div>
 
-<div class="panel">
-  <div class="title">ARIGO • Mauritius</div>
+    <div class="form-group">
+        <label for="pickup">Pickup Location</label>
+        <input type="text" id="pickup" placeholder="Enter pickup address">
+        <button class="geo-btn" onclick="useCurrentLocation()">📍 Use Current Location</button>
+    </div>
 
-  <div class="route">
-    Pickup: <span id="pickup">Tap map</span><br>
-    Dropoff: <span id="dropoff">Tap again</span>
-  </div>
+    <div class="form-group">
+        <label for="dropoff">Drop-off Location</label>
+        <input type="text" id="dropoff" placeholder="Enter destination">
+    </div>
 
-  <div class="price" id="price">Rs 0</div>
+    <div class="form-group">
+        <label for="passengers">Number of Passengers</label>
+        <input type="number" id="passengers" min="1" max="8" value="1">
+    </div>
 
-  <button onclick="book()">Book via WhatsApp</button>
+    <div class="form-group">
+        <label>Select Vehicle Type</label>
+        <div class="vehicle-options">
+            <label><input type="radio" name="vehicle" value="Standard" checked onchange="calculatePrice()"> Standard</label>
+            <label><input type="radio" name="vehicle" value="SUV" onchange="calculatePrice()"> SUV</label>
+            <label><input type="radio" name="vehicle" value="Premium" onchange="calculatePrice()"> Premium</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="instructions">Special Instructions (Optional)</label>
+        <textarea id="instructions" rows="2" placeholder="e.g., need child seat or heavy luggage"></textarea>
+    </div>
+
+    <div class="price-display" id="priceDisplay">
+        Estimated Price: MUR 0
+    </div>
+
+    <button class="whatsapp-btn" onclick="sendWhatsApp()">Book via WhatsApp</button>
 </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initMap"></script>
 
 <script>
-let map = L.map('map',{zoomControl:false})
-.setView([-20.28,57.57],10);
+    let map, directionsService, directionsRenderer, distanceMatrixService;
+    let pickupInput, dropoffInput;
+    let currentDistanceKm = 0;
 
-// dark theme map
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+    // Base pricing in MUR
+    const baseFare = 100; 
+    const pricePerKm = 50; 
 
-// subtle taxi dots
-for(let i=0;i<400;i++){
-  let lat=-20.6+Math.random()*0.8;
-  let lng=57.3+Math.random()*0.8;
+    function initMap() {
+        // Center map on Mauritius
+        const mauritius = { lat: -20.3484, lng: 57.5522 };
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 10,
+            center: mauritius,
+        });
 
-  L.circleMarker([lat,lng],{
-    radius:2,
-    color:"#ffd54f",
-    opacity:0.5
-  }).addTo(map);
-}
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+        distanceMatrixService = new google.maps.DistanceMatrixService();
 
-let pickup=null;
-let dropoff=null;
-let line=null;
+        // Setup Autocomplete biased to Mauritius
+        const options = {
+            componentRestrictions: { country: "mu" },
+            fields: ["formatted_address", "geometry"]
+        };
 
-map.on('click', function(e){
+        pickupInput = new google.maps.places.Autocomplete(document.getElementById("pickup"), options);
+        dropoffInput = new google.maps.places.Autocomplete(document.getElementById("dropoff"), options);
 
-  if(!pickup){
-    pickup=e.latlng;
-    L.marker(pickup).addTo(map);
-    document.getElementById("pickup").innerText="Selected";
-  }
+        pickupInput.addListener("place_changed", updateRoute);
+        dropoffInput.addListener("place_changed", updateRoute);
+    }
 
-  else if(!dropoff){
-    dropoff=e.latlng;
-    L.marker(dropoff).addTo(map);
-    document.getElementById("dropoff").innerText="Selected";
+    function useCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+                    
+                    // Reverse geocode to get the address string
+                    const geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ location: pos }, (results, status) => {
+                        if (status === "OK" && results[0]) {
+                            document.getElementById("pickup").value = results[0].formatted_address;
+                            updateRoute();
+                        }
+                    });
+                },
+                () => {
+                    alert("Error: The Geolocation service failed.");
+                }
+            );
+        } else {
+            alert("Error: Your browser doesn't support geolocation.");
+        }
+    }
 
-    drawLine();
-    calculate();
-  }
+    function updateRoute() {
+        const origin = document.getElementById("pickup").value;
+        const destination = document.getElementById("dropoff").value;
 
-  else{
-    location.reload(); // reset clean
-  }
-});
+        if (origin && destination) {
+            // Draw route on map
+            directionsService.route({
+                origin: origin,
+                destination: destination,
+                travelMode: google.maps.TravelMode.DRIVING,
+            }, (response, status) => {
+                if (status === "OK") {
+                    directionsRenderer.setDirections(response);
+                }
+            });
 
-function drawLine(){
-  if(line) map.removeLayer(line);
+            // Calculate distance for pricing
+            distanceMatrixService.getDistanceMatrix({
+                origins: [origin],
+                destinations: [destination],
+                travelMode: 'DRIVING',
+            }, (response, status) => {
+                if (status === 'OK') {
+                    const results = response.rows[0].elements;
+                    if (results[0].status === 'OK') {
+                        currentDistanceKm = results[0].distance.value / 1000;
+                        calculatePrice();
+                    }
+                }
+            });
+        }
+    }
 
-  line = L.polyline([pickup, dropoff], {
-    color: "#25D366",
-    weight: 4
-  }).addTo(map);
-}
+    function calculatePrice() {
+        if (currentDistanceKm === 0) return;
 
-function distance(a,b){
-  const R=6371;
-  const dLat=(b.lat-a.lat)*Math.PI/180;
-  const dLon=(b.lng-a.lng)*Math.PI/180;
+        let multiplier = 1;
+        const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
 
-  const x=Math.sin(dLat/2)**2 +
-    Math.cos(a.lat*Math.PI/180)*
-    Math.cos(b.lat*Math.PI/180)*
-    Math.sin(dLon/2)**2;
+        if (vehicleType === "SUV") multiplier = 1.5;
+        if (vehicleType === "Premium") multiplier = 2.0;
 
-  return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
-}
+        const totalCost = Math.round(baseFare + (currentDistanceKm * pricePerKm * multiplier));
+        document.getElementById("priceDisplay").innerText = Estimated Price: MUR ${totalCost};
+        
+        // Store the final price for the WhatsApp message
+        document.getElementById("priceDisplay").dataset.price = totalCost;
+    }
 
-function calculate(){
-  let d = distance(pickup,dropoff);
-  let fare = Math.min(d*100,2000);
+    function sendWhatsApp() {
+        const pickup = document.getElementById("pickup").value;
+        const dropoff = document.getElementById("dropoff").value;
+        const passengers = document.getElementById("passengers").value;
+        const vehicleType = document.querySelector('input[name="vehicle"]:checked').value;
+        const instructions = document.getElementById("instructions").value;
+        const price = document.getElementById("priceDisplay").dataset.price || "To be confirmed";
 
-  let priceEl = document.getElementById("price");
-  priceEl.innerText = "Rs " + Math.round(fare);
-  priceEl.style.display="block";
-}
+        if (!pickup || !dropoff) {
+            alert("Please enter both pickup and drop-off locations.");
+            return;
+        }
 
-function book(){
-  if(!pickup || !dropoff){
-    alert("Select route");
-    return;
-  }
+        // Construct the message
+        let message = *New Taxi Booking Request*%0A;
+        message += 📍 *Pickup:* ${pickup}%0A;
+        message += 🏁 *Drop-off:* ${dropoff}%0A;
+        message += 👥 *Passengers:* ${passengers}%0A;
+        message += 🚗 *Vehicle Type:* ${vehicleType}%0A;
+        if (instructions) {
+            message += 📝 *Notes:* ${instructions}%0A;
+        }
+        message += 💰 *Estimated Price:* MUR ${price}%0A;
 
-  let msg=`Taxi booking Mauritius:
-Pickup selected
-Dropoff selected
-Price: ${document.getElementById("price").innerText}`;
+        // Replace with your actual business WhatsApp number (include country code, no + or spaces)
+        const whatsappNumber = "230XXXXXXXX"; 
+        const whatsappURL = https://wa.me/${whatsappNumber}?text=${message};
 
-  window.open("https://wa.me/23059237053?text="+encodeURIComponent(msg));
-}
+        // Open WhatsApp in a new tab/window
+        window.open(whatsappURL, '_blank');
+    }
 </script>
 
 </body>
