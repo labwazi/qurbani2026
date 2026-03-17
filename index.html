@@ -1,117 +1,757 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Official website of Munsoo Kurrimbaccus - Diplomat and Social Icon from Mauritius">
-    <title>Munsoo Kurrimbaccus - Official Website</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pO2eG1iDIkIZ4gcyM3PwN4cyG2VzdcKNnb4vYUTz7eCShF3e1l9Zy3UdXyMPm1nBFvFzghSCzRgN5i1PRJrLwQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', sans-serif;
-        }
-        body {
-            color: #333;
-        }
-        .section {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
-        }
-        .red { background-color: #e60000; color: white; }
-        .blue { background-color: #0057a3; color: white; }
-        .yellow { background-color: #f4c300; color: black; overflow-y: auto; }
-        .green { background-color: #009739; color: white; }
-        h1 {
-            font-size: 3.5em;
-        }
-        h2 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-        p, li {
-            font-size: 1.2em;
-            line-height: 1.8;
-        }
-        ul {
-            list-style-type: disc;
-            padding-left: 20px;
-            text-align: left;
-        }
-        .hero-image {
-            max-height: 80vh;
-            width: auto;
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-        }
-        .social-icons {
-            margin-top: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-        .social-icons a {
-            color: inherit;
-            font-size: 1.5em;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .social-icons i {
-            font-size: 2em;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARIGO • taxi & tours Mauritius</title>
+  <!-- Font Awesome 6 (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Font: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #f9fafc;
+      color: #1e2a3a;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* header */
+    header {
+      background-color: #0b1a2e;
+      color: white;
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .header-flex {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span {
+      color: #f39c12;
+    }
+
+    .logo small {
+      font-size: 0.9rem;
+      font-weight: 300;
+      display: block;
+      line-height: 1.2;
+      color: #ccd5e0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: #ecf0f3;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #f39c12;
+    }
+
+    /* hero */
+    .hero {
+      background: linear-gradient(135deg, #0b1a2e 0%, #1e3a5f 100%);
+      color: white;
+      padding: 50px 0;
+      border-radius: 0 0 40px 40px;
+      margin-bottom: 40px;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .hero-text {
+      flex: 1 1 300px;
+    }
+
+    .hero-text h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .hero-text h1 i {
+      color: #f39c12;
+    }
+
+    .hero-text p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 25px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #f39c12;
+      color: #0b1a2e;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .hero-image {
+      flex: 1 1 300px;
+      text-align: center;
+    }
+
+    .hero-image i {
+      font-size: 12rem;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* booking card */
+    .booking-card {
+      background: white;
+      border-radius: 32px;
+      padding: 35px 30px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      margin-top: -60px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 5;
+      border: 1px solid #eef2f6;
+    }
+
+    .booking-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .booking-title i {
+      color: #f39c12;
+      font-size: 2rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-group label {
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: #2c3e50;
+    }
+
+    .input-group input, .input-group select {
+      padding: 15px 18px;
+      border: 1px solid #d0dbe8;
+      border-radius: 60px;
+      font-size: 1rem;
+      background: white;
+      transition: all 0.2s;
+    }
+
+    .input-group input:focus, .input-group select:focus {
+      outline: none;
+      border-color: #f39c12;
+      box-shadow: 0 0 0 3px rgba(243,156,18,0.2);
+    }
+
+    .fare-estimate {
+      background: #f0f4fa;
+      border-radius: 60px;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+      font-weight: 500;
+    }
+
+    .fare-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1e2a3a;
+    }
+
+    .fare-amount {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0b1a2e;
+    }
+
+    .fare-amount span {
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: #4a5b6e;
+    }
+
+    .btn-whatsapp {
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 18px 30px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      border-radius: 60px;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      box-shadow: 0 8px 16px rgba(37,211,102,0.3);
+    }
+
+    .btn-whatsapp:hover {
+      background: #20b859;
+      transform: scale(1.02);
+    }
+
+    .btn-whatsapp i {
+      font-size: 1.8rem;
+    }
+
+    /* popular routes hint */
+    .route-hint {
+      margin-top: 15px;
+      font-size: 0.95rem;
+      color: #4a5b6e;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .route-badge {
+      background: #e9ecf0;
+      border-radius: 40px;
+      padding: 5px 15px;
+      font-weight: 500;
+      color: #0b1a2e;
+    }
+
+    .route-badge i {
+      color: #f39c12;
+      margin-right: 5px;
+    }
+
+    /* services */
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 600;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .section-title:after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: #f39c12;
+      margin-top: 8px;
+      border-radius: 4px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin: 50px 0;
+    }
+
+    .service-card {
+      background: white;
+      border-radius: 28px;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+      transition: all 0.2s;
+      border: 1px solid #eef2f6;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+    }
+
+    .service-icon {
+      background: #f39c12;
+      width: 80px;
+      height: 80px;
+      line-height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      color: white;
+      font-size: 2.5rem;
+    }
+
+    .service-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+
+    .service-card p {
+      color: #4a5b6e;
+    }
+
+    /* why us */
+    .why-us {
+      background: #0b1a2e;
+      color: white;
+      border-radius: 50px;
+      padding: 50px 40px;
+      margin: 60px 0;
+    }
+
+    .why-us-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 30px;
+    }
+
+    .why-item {
+      text-align: center;
+    }
+
+    .why-item i {
+      font-size: 2.5rem;
+      color: #f39c12;
+      margin-bottom: 15px;
+    }
+
+    .why-item h4 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+
+    .why-item p {
+      opacity: 0.8;
+    }
+
+    /* summary section (exactly as you wrote) */
+    .summary-block {
+      background: white;
+      border-radius: 40px;
+      padding: 40px;
+      border-left: 6px solid #f39c12;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+      margin: 40px 0;
+    }
+
+    .summary-block h3 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      color: #0b1a2e;
+    }
+
+    .summary-block ul {
+      list-style: none;
+    }
+
+    .summary-block li {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .summary-block li i {
+      color: #f39c12;
+      width: 24px;
+      font-size: 1.3rem;
+    }
+
+    .highlight {
+      background: #fcf2e1;
+      padding: 20px;
+      border-radius: 24px;
+      margin-top: 25px;
+      font-weight: 500;
+      border: 1px dashed #f39c12;
+    }
+
+    /* footer */
+    footer {
+      background: #0f212f;
+      color: #ccd5e0;
+      padding: 40px 0;
+      border-radius: 40px 40px 0 0;
+      margin-top: 60px;
+    }
+
+    .footer-flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .footer-contact i {
+      color: #f39c12;
+      margin-right: 8px;
+    }
+
+    .footer-social a {
+      color: white;
+      background: #1e3a5f;
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-left: 10px;
+      transition: background 0.2s;
+    }
+
+    .footer-social a:hover {
+      background: #f39c12;
+      color: #0b1a2e;
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+
+    /* mobile */
+    @media (max-width: 700px) {
+      .header-flex {
+        flex-direction: column;
+        gap: 15px;
+      }
+      .hero-text h1 {
+        font-size: 2rem;
+      }
+      .fare-estimate {
+        flex-direction: column;
+        align-items: start;
+        gap: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <section class="section red">
-        <div>
-            <h1>Munsoo Kurrimbaccus</h1>
-            <p>Mauritius' Global Voice | Diplomat | Educator</p>
-        </div>
-    </section>
+  <header>
+    <div class="container header-flex">
+      <div class="logo">
+        ARIGO <span>🚖</span>
+        <small>brother of Arifood</small>
+      </div>
+      <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#book">Book</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </header>
 
-    <section class="section blue">
-        <div>
-            <img src="images/mansoo.jpg" alt="Munsoo Kurrimbaccus" class="hero-image">
-            <p style="margin-top: 20px; font-size: 1.5em;">Strong Vision. Mauritian Heart.</p>
-        </div>
-    </section>
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="hero-text">
+        <h1>Island rides,<br> <i>simple & fast</i></h1>
+        <p>🇲🇺 Mauritius taxi • airport • tours • city</p>
+        <div class="badge"><i class="fas fa-whatsapp"></i> 100% WhatsApp booking</div>
+      </div>
+      <div class="hero-image">
+        <i class="fas fa-taxi"></i>
+      </div>
+    </div>
+  </section>
 
-    <section class="section yellow">
-        <div>
-            <h2>About Munsoo</h2>
-            <p>Munsoo Kurrimbaccus is a prominent Mauritian figure known for his work in education, diplomacy, and social advocacy. He has served as the Vice-President of the Union of Private Secondary Education Employees (UPSEE), where he strongly defended the rights of teachers and pushed for fair reforms in private education. With decades of leadership experience, Munsoo is widely respected in academic and political circles.</p>
-            <p>In 2024, he was appointed as the High Commissioner of Mauritius to Pakistan, a testament to his diplomatic skills and commitment to representing Mauritius on the international stage. He is known for being outspoken, deeply patriotic, and committed to transparent governance and development.</p>
-            <h2>News & Media</h2>
-            <ul>
-                <li>As UPSEE Vice-President, Munsoo voiced serious concerns about PSEA’s lack of transparency in managing teaching licences at Mauritius College. (<a href="https://www.webmauritius.com/article/ionnews/%5BUPSEE%5D%2BMunsoo%2BKurrimboccus%2B%3A%2B%C2%AB%2BLe%2Bdirecteur%2Bde%2Bla%2BPSEA%2Bn%E2%80%99a%2Bpas%2Ble%2Bdroit%2Bde%2Br%C3%A9voquer%2Bles%2B%E2%80%98teaching%2Blicences%E2%80%99%2B%C2%BB/3408161" target="_blank">WebMauritius</a>)</li>
-                <li>He led protests calling on the Ministry of Education to take action against institutions accused of mismanagement, including the widely reported Mauritius College case. (<a href="https://www.webmauritius.com/article/ionnews/Munsoo%2BKurrimboccus%2B%3A%2B%C2%AB%2BKifer%2Bpe%2Bprotez%2Bsa%2Blekol%2Bla%2B%C2%BB/3504581" target="_blank">Read article</a>)</li>
-                <li>His appointment as High Commissioner to Pakistan was widely welcomed, marking a significant diplomatic moment for Mauritius.</li>
-            </ul>
-        </div>
-    </section>
+  <div class="container" id="book">
+    <div class="booking-card">
+      <div class="booking-title">
+        <i class="fas fa-pen-alt"></i> 
+        <span>Where to, today?</span>
+      </div>
 
-    <section class="section green">
-        <div>
-            <h2>Contact</h2>
-            <p>For appearances, collaboration, or inquiries:</p>
-            <div class="social-icons">
-                <a href="https://www.facebook.com/munsoo.kurrimbaccus" target="_blank"><i class="fab fa-facebook"></i>Follow us on Facebook</a>
-                <a href="https://wa.me/2307721888" target="_blank"><i class="fab fa-whatsapp"></i>Chat on WhatsApp</a>
-                <a href="mailto:mkurrimbaccus@yahoo.co.uk"><i class="fas fa-envelope"></i>Send an Email</a>
-                <a href="https://www.tiktok.com/@munsookurrimbaccu" target="_blank"><i class="fab fa-tiktok"></i>Watch on TikTok</a>
-            </div>
+      <div class="form-grid">
+        <div class="input-group">
+          <label><i class="fas fa-map-pin"></i> Pickup</label>
+          <input type="text" id="pickup" placeholder="e.g. SSR Airport, Port Louis..." value="SSR Airport">
         </div>
-    </section>
+        <div class="input-group">
+          <label><i class="fas fa-flag-checkered"></i> Dropoff</label>
+          <input type="text" id="dropoff" placeholder="e.g. Port Louis, Grand Baie..." value="Port Louis">
+        </div>
+        <div class="input-group">
+          <label><i class="fas fa-calendar"></i> Date</label>
+          <input type="date" id="date" value="2025-04-10">
+        </div>
+        <div class="input-group">
+          <label><i class="fas fa-clock"></i> Time</label>
+          <input type="time" id="time" value="10:30">
+        </div>
+      </div>
+
+      <!-- dynamic fare estimate -->
+      <div class="fare-estimate" id="fareBox">
+        <span class="fare-label"><i class="fas fa-calculator"></i> Estimated fare</span>
+        <span class="fare-amount" id="fareAmount">Rs 2,000 <span>~ Rs 2,500</span></span>
+      </div>
+
+      <!-- whatsapp button -->
+      <button class="btn-whatsapp" id="whatsappBookBtn">
+        <i class="fab fa-whatsapp"></i> Book via WhatsApp
+      </button>
+
+      <!-- popular routes hint -->
+      <div class="route-hint">
+        <span><i class="fas fa-route"></i> popular routes:</span>
+        <span class="route-badge"><i class="fas fa-plane"></i> Airport → Port Louis: Rs 2,000</span>
+        <span class="route-badge"><i class="fas fa-plane"></i> Airport → Grand Baie: Rs 2,800</span>
+        <span class="route-badge"><i class="fas fa-hotel"></i> Port Louis → Flic en Flac: Rs 1,500</span>
+        <span class="route-badge"><i class="fas fa-mountain"></i> Chamarel tour: Rs 3,500</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="services">
+    <h2 class="section-title">Our services</h2>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-plane-arrival"></i></div>
+        <h3>Airport transfers</h3>
+        <p>SSR to any hotel • meet & greet • flight tracking</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-city"></i></div>
+        <h3>City rides</h3>
+        <p>Port Louis, Curepipe, Quatre Bornes – instant booking</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-umbrella-beach"></i></div>
+        <h3>Island tours</h3>
+        <p>Guided excursions • north / south / east coasts</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-clock"></i></div>
+        <h3>Pre-book & hourly</h3>
+        <p>Half/full day rental • tailor made itinerary</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="why-us">
+      <h2 class="section-title" style="color:white;">Why ARIGO?</h2>
+      <div class="why-us-grid">
+        <div class="why-item">
+          <i class="fas fa-id-card"></i>
+          <h4>Verified drivers</h4>
+          <p>Background check • local pros</p>
+        </div>
+        <div class="why-item">
+          <i class="fas fa-shield-alt"></i>
+          <h4>Safe rides</h4>
+          <p>Live trip share • SOS ready</p>
+        </div>
+        <div class="why-item">
+          <i class="fab fa-whatsapp"></i>
+          <h4>WhatsApp direct</h4>
+          <p>One‑tap booking • human support</p>
+        </div>
+        <div class="why-item">
+          <i class="fas fa-leaf"></i>
+          <h4>Eco‑friendly</h4>
+          <p>Hybrid/electric on request</p>
+        </div>
+        <div class="why-item">
+          <i class="fas fa-trophy"></i>
+          <h4>Loyalty points</h4>
+          <p>Every ride = future discount</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary block (exactly as you described, adapted to ARIGO) -->
+  <div class="container">
+    <div class="summary-block">
+      <h3><i class="fas fa-lightbulb"></i> ARIGO strategy – better than the rest</h3>
+      <ul>
+        <li><i class="fas fa-check-circle"></i> <strong>Uber simplicity</strong> – clean landing, minimal form, live fare hint</li>
+        <li><i class="fas fa-check-circle"></i> <strong>Local identity</strong> – Mauritius focus, airport & tours, brother of Arifood</li>
+        <li><i class="fas fa-check-circle"></i> <strong>Extra value</strong> – loyalty, eco‑friendly options, multilingual support (Fr/En)</li>
+        <li><i class="fas fa-check-circle"></i> <strong>Tech excellence</strong> – frontend only, zero backend, everything via WhatsApp API</li>
+        <li><i class="fas fa-check-circle"></i> <strong>Trust & safety</strong> – verified drivers, SOS button (in chat), transparent pricing</li>
+      </ul>
+      <div class="highlight">
+        <i class="fas fa-gem"></i> <strong>Winning formula:</strong> Tech (Uber) + Local (DodoGo) + WhatsApp = <strong>ARIGO</strong>. All booking requests go to <strong>+230 5923 7053</strong> – I manually connect you with the perfect driver.
+      </div>
+    </div>
+  </div>
+
+  <footer id="contact">
+    <div class="container footer-flex">
+      <div class="footer-contact">
+        <i class="fab fa-whatsapp"></i> +230 5923 7053 <br>
+        <i class="fas fa-envelope"></i> ride@arigo.mu
+      </div>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+    <div class="copyright container">
+      © 2026 ARIGO – brother of Arifood. Island taxi, reimagined.
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      // ---------- FARE CALCULATOR (simple route based) ----------
+      const pickupInput = document.getElementById('pickup');
+      const dropoffInput = document.getElementById('dropoff');
+      const fareAmountSpan = document.getElementById('fareAmount');
+
+      // Predefined routes (case‑insensitive, partial match)
+      const routeFares = [
+        { keywords: ['airport', 'ssr', 'plaisance'], dest: ['port louis', 'caudan', 'jummah'], fare: 'Rs 2,000' },
+        { keywords: ['airport', 'ssr', 'plaisance'], dest: ['grand baie', 'grand bay'], fare: 'Rs 2,800' },
+        { keywords: ['airport', 'ssr', 'plaisance'], dest: ['flic en flac', 'flicenflac'], fare: 'Rs 2,500' },
+        { keywords: ['port louis', 'caudan'], dest: ['flic en flac', 'flicenflac'], fare: 'Rs 1,500' },
+        { keywords: ['port louis', 'caudan'], dest: ['grand baie', 'grand bay'], fare: 'Rs 1,800' },
+        { keywords: ['chamarel', 'seven coloured'], any: true, fare: 'Rs 3,500' },  // tour
+        { keywords: ['ile aux cerfs', 'deaux cerfs'], any: true, fare: 'Rs 4,000' }
+      ];
+
+      function normalize(str) {
+        return str.toLowerCase().replace(/[^\w\s]/g, '').trim();
+      }
+
+      function computeFare(pickup, dropoff) {
+        if (!pickup || !dropoff) return 'Rs ---';
+        const p = normalize(pickup);
+        const d = normalize(dropoff);
+
+        // exact match attempts
+        for (let route of routeFares) {
+          const pickMatch = route.keywords.some(k => p.includes(k.toLowerCase()));
+          const dropMatch = route.dest ? route.dest.some(k => d.includes(k.toLowerCase())) : false;
+          if (route.any) {
+            // if either pickup or drop contains the keyword (for tours)
+            if (route.keywords.some(k => p.includes(k) || d.includes(k))) {
+              return route.fare;
+            }
+          }
+          if (pickMatch && dropMatch) {
+            return route.fare;
+          }
+          // also check reverse direction (swap)
+          const pickMatchReverse = route.dest ? route.dest.some(k => p.includes(k)) : false;
+          const dropMatchReverse = route.keywords.some(k => d.includes(k));
+          if (pickMatchReverse && dropMatchReverse) {
+            return route.fare;
+          }
+        }
+
+        // special case: if airport involved but not in list, propose min Rs 2000
+        if (p.includes('airport') || d.includes('airport') || p.includes('ssr') || d.includes('ssr')) {
+          return 'Rs 2,000 – Rs 3,500*';
+        }
+        return 'Request fare';
+      }
+
+      function updateFare() {
+        const pickup = pickupInput.value;
+        const dropoff = dropoffInput.value;
+        const fare = computeFare(pickup, dropoff);
+        fareAmountSpan.innerHTML = fare + ' <span>(approx)</span>';
+      }
+
+      pickupInput.addEventListener('input', updateFare);
+      dropoffInput.addEventListener('input', updateFare);
+      window.addEventListener('load', updateFare); // initial
+
+      // ---------- WHATSAPP BOOKING ----------
+      const whatsappBtn = document.getElementById('whatsappBookBtn');
+      const phoneNumber = '23059237053'; // without '+' for wa.me
+
+      function buildWhatsAppMessage() {
+        const pickup = pickupInput.value.trim() || 'not specified';
+        const dropoff = dropoffInput.value.trim() || 'not specified';
+        const date = document.getElementById('date').value || 'not set';
+        const time = document.getElementById('time').value || 'not set';
+
+        // get displayed fare (clean)
+        const fareElement = document.getElementById('fareAmount');
+        let fareText = fareElement.innerText.replace(/\s*\(approx\)\s*/g, '').trim();
+
+        const message = `Hello ARIGO, I need a taxi:%0A🚖 Pickup: ${pickup}%0A📍 Dropoff: ${dropoff}%0A📅 Date: ${date}%0A⏰ Time: ${time}%0A💰 Est. fare: ${fareText}%0A%0APlease confirm & assign a driver. Thank you!`;
+        return message;
+      }
+
+      whatsappBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const message = buildWhatsAppMessage();
+        const url = `https://wa.me/${phoneNumber}?text=${message}`;
+        window.open(url, '_blank');
+      });
+
+      // optional: prefill date/time with sensible defaults
+      const today = new Date().toISOString().split('T')[0];
+      if (!document.getElementById('date').value) {
+        document.getElementById('date').value = today;
+      }
+      if (!document.getElementById('time').value) {
+        document.getElementById('time').value = '10:00';
+      }
+    })();
+  </script>
+  <!-- guarantee that the number appears everywhere -->
+  <div style="display: none;">WhatsApp direct +230 5923 7053</div>
 </body>
 </html>
