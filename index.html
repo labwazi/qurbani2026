@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taxi Mauritius</title>
+<title>Taxi Mauritius Pro</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -12,15 +12,17 @@
 
 <style>
 body{font-family:Arial;margin:0;background:#f4f7f6}
-.container{max-width:700px;margin:20px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+.container{max-width:750px;margin:20px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
 h2{text-align:center}
-#map{height:300px;border-radius:10px;margin-bottom:15px}
+#map{height:350px;border-radius:10px;margin-bottom:15px}
 input,select,textarea{width:100%;padding:10px;margin-top:5px;border-radius:6px;border:1px solid #ccc}
 label{font-weight:bold}
 button{margin-top:10px;padding:12px;border:none;border-radius:6px;cursor:pointer}
 .primary{background:#25D366;color:#fff;font-weight:bold;width:100%}
-.secondary{background:#3498db;color:#fff}
+.secondary{background:#3498db;color:#fff;width:100%}
 .price{background:#eafaf1;padding:12px;text-align:center;font-weight:bold;margin-top:15px;border-radius:6px}
+.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-top:10px}
+.quick button{background:#eee}
 </style>
 </head>
 
@@ -30,11 +32,21 @@ button{margin-top:10px;padding:12px;border:none;border-radius:6px;cursor:pointer
 
 <div id="map"></div>
 
-<label>Pickup Location</label>
-<input id="pickup" placeholder="Enter pickup village/town">
+<label>Pickup</label>
+<input id="pickup">
+<button class="secondary" onclick="setCurrentLocation()">📍 Use My Location</button>
 
-<label>Drop-off Location</label>
-<input id="dropoff" placeholder="Enter destination">
+<label>Drop-off</label>
+<input id="dropoff">
+
+<div class="quick">
+<button onclick="setPlace('SSR Airport')">Airport</button>
+<button onclick="setPlace('Port Louis')">Port Louis</button>
+<button onclick="setPlace('Grand Baie')">Grand Baie</button>
+<button onclick="setPlace('Flic en Flac')">Flic en Flac</button>
+<button onclick="setPlace('Curepipe')">Curepipe</button>
+<button onclick="setPlace('Mahebourg')">Mahebourg</button>
+</div>
 
 <label>Date & Time</label>
 <input type="datetime-local" id="datetime">
@@ -63,88 +75,119 @@ button{margin-top:10px;padding:12px;border:none;border-radius:6px;cursor:pointer
 </div>
 
 <script>
-let map = L.map('map').setView([-20.3484,57.5522],10);
+let map = L.map('map').setView([-20.2,57.5],11);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-let control;
+let markerStart, markerEnd, control;
 let distanceKm = 0;
 
 const baseFare = 150;
 const perKm = 45;
 
+map.on('click', function(e){
+if(!markerStart){
+markerStart = L.marker(e.latlng).addTo(map);
+document.getElementById('pickup').value = e.latlng.lat + ',' + e.latlng.lng;
+} else if(!markerEnd){
+markerEnd = L.marker(e.latlng).addTo(map);
+document.getElementById('dropoff').value = e.latlng.lat + ',' + e.latlng.lng;
+} else {
+map.removeLayer(markerStart);
+map.removeLayer(markerEnd);
+markerStart = L.marker(e.latlng).addTo(map);
+markerEnd = null;
+document.getElementById('pickup').value = e.latlng.lat + ',' + e.latlng.lng;
+document.getElementById('dropoff').value = '';
+}
+});
+
+function setPlace(place){
+document.getElementById('dropoff').value = place;
+}
+
+function setCurrentLocation(){
+navigator.geolocation.getCurrentPosition(pos=>{
+const latlng=[pos.coords.latitude,pos.coords.longitude];
+if(markerStart) map.removeLayer(markerStart);
+markerStart=L.marker(latlng).addTo(map);
+document.getElementById('pickup').value=latlng.join(',');
+});
+}
+
 async function geocode(place){
-const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${place}`);
-const data = await res.json();
+if(place.includes(',')){
+let parts=place.split(',');
+return [parseFloat(parts[0]),parseFloat(parts[1])];
+}
+const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${place}, Mauritius`);
+const data=await res.json();
 if(data.length===0) return null;
-return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+return [parseFloat(data[0].lat),parseFloat(data[0].lon)];
 }
 
 async function calculateRoute(){
-const pickup = document.getElementById('pickup').value;
-const dropoff = document.getElementById('dropoff').value;
+const p=document.getElementById('pickup').value;
+const d=document.getElementById('dropoff').value;
+if(!p||!d){alert('Select locations');return;}
 
-if(!pickup || !dropoff){alert('Enter locations');return;}
+const start=await geocode(p);
+const end=await geocode(d);
 
-const start = await geocode(pickup + ', Mauritius');
-const end = await geocode(dropoff + ', Mauritius');
-
-if(!start || !end){alert('Location not found');return;}
+if(!start||!end){alert('Location not found');return;}
 
 if(control) map.removeControl(control);
 
-control = L.Routing.control({
-waypoints: [L.latLng(start), L.latLng(end)],
-routeWhileDragging: false
-}).addTo(map);
+control=L.Routing.control({waypoints:[L.latLng(start),L.latLng(end)]}).addTo(map);
 
 control.on('routesfound', function(e){
-const route = e.routes[0];
-distanceKm = route.summary.totalDistance / 1000;
+const route=e.routes[0];
+distanceKm=route.summary.totalDistance/1000;
 calculatePrice();
 });
 }
 
 function calculatePrice(){
-if(distanceKm===0) return;
+if(distanceKm===0)return;
 
-let mult = 1;
-const vehicle = document.getElementById('vehicle').value;
-if(vehicle==='SUV') mult = 1.5;
-if(vehicle==='Premium') mult = 2;
+let mult=1;
+const v=document.getElementById('vehicle').value;
+if(v==='SUV') mult=1.5;
+if(v==='Premium') mult=2;
 
-const hour = new Date(document.getElementById('datetime').value).getHours();
-let night = (hour>=22 || hour<6)?1.2:1;
+let night=1;
+const dt=document.getElementById('datetime').value;
+if(dt){
+const h=new Date(dt).getHours();
+if(h>=22||h<6) night=1.2;
+}
 
-const total = Math.round(baseFare + distanceKm * perKm * mult * night);
+const total=Math.round(baseFare+distanceKm*perKm*mult*night);
 
-document.getElementById('price').innerText = 'Estimated: MUR ' + total;
-document.getElementById('price').dataset.price = total;
+document.getElementById('price').innerText='Estimated: MUR '+total;
+document.getElementById('price').dataset.price=total;
 }
 
 function sendWhatsApp(){
-const p = document.getElementById('pickup').value;
-const d = document.getElementById('dropoff').value;
-const dt = document.getElementById('datetime').value;
-const pass = document.getElementById('passengers').value;
-const veh = document.getElementById('vehicle').value;
-const notes = document.getElementById('notes').value;
-const price = document.getElementById('price').dataset.price || 'TBC';
+const p=document.getElementById('pickup').value;
+const d=document.getElementById('dropoff').value;
+const dt=document.getElementById('datetime').value;
+const pass=document.getElementById('passengers').value;
+const veh=document.getElementById('vehicle').value;
+const notes=document.getElementById('notes').value;
+const price=document.getElementById('price').dataset.price||'TBC';
 
-if(!p || !d){alert('Fill locations');return;}
+let msg='🚖 Taxi Booking%0A'+
+'📍 Pickup: '+p+'%0A'+
+'🏁 Drop: '+d+'%0A'+
+'📅 Time: '+dt+'%0A'+
+'👥 Pax: '+pass+'%0A'+
+'🚗 Vehicle: '+veh+'%0A'+
+'💰 Price: MUR '+price+'%0A';
 
-let msg = '🚖 Taxi Booking%0A' +
-'📍 Pickup: ' + p + '%0A' +
-'🏁 Drop: ' + d + '%0A' +
-'📅 Time: ' + dt + '%0A' +
-'👥 Pax: ' + pass + '%0A' +
-'🚗 Vehicle: ' + veh + '%0A' +
-'💰 Price: MUR ' + price + '%0A';
+if(notes) msg+='📝 Notes: '+notes;
 
-if(notes) msg += '📝 Notes: ' + notes;
-
-window.open('https://wa.me/23059237053?text=' + msg, '_blank');
+window.open('https://wa.me/23059237053?text='+msg,'_blank');
 }
 </script>
 </body>
