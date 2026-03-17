@@ -3,187 +3,194 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARIGO Taxi Mauritius PRO</title>
+<title>ARIGO</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
-body {margin:0;font-family:sans-serif;background:#f5f7fb;}
-header {background:#0f2b45;color:white;padding:15px;font-size:20px;font-weight:bold;}
-
-.container {
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:20px;
-  padding:20px;
+body {
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background:#0b1220;
+  color:white;
 }
 
-#map {height:80vh;border-radius:20px;}
+/* layout */
+#map {
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:100%;
+  z-index:1;
+}
 
+/* glass panel */
 .panel {
-  background:white;
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:95%;
+  max-width:500px;
+  background:rgba(20,30,50,0.85);
+  backdrop-filter: blur(20px);
+  border-radius:25px;
   padding:20px;
-  border-radius:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+  z-index:2;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
 }
 
-.route {background:#eef3f8;padding:15px;border-radius:15px;margin-bottom:15px;}
-.price {font-size:26px;font-weight:bold;margin-top:10px;}
-
-.passengers {display:flex;gap:10px;margin:10px 0;}
-.passengers div {
-  flex:1;
-  text-align:center;
-  padding:10px;
-  border:1px solid #ccc;
-  border-radius:10px;
-  cursor:pointer;
+/* header */
+.title {
+  font-size:18px;
+  font-weight:600;
+  opacity:0.8;
+  margin-bottom:10px;
 }
-.active {background:#0f2b45;color:white;}
 
-input {width:100%;padding:10px;margin:10px 0;border-radius:10px;border:1px solid #ccc;}
+/* route display */
+.route {
+  font-size:14px;
+  opacity:0.9;
+}
 
+.price {
+  font-size:28px;
+  font-weight:700;
+  margin-top:10px;
+  display:none;
+}
+
+/* button */
 button {
   width:100%;
-  padding:15px;
+  margin-top:15px;
+  padding:14px;
   border:none;
   border-radius:30px;
   background:#25D366;
   color:white;
   font-size:16px;
-  font-weight:bold;
+  font-weight:600;
 }
 
-@media(max-width:900px){
-  .container{grid-template-columns:1fr;}
+/* taxi dots */
+.taxi {
+  width:6px;
+  height:6px;
+  background:#ffd54f;
+  border-radius:50%;
+  opacity:0.7;
 }
+
 </style>
 </head>
 
 <body>
 
-<header>ARIGO 🚖 Mauritius Taxi PRO</header>
+<div id="map"></div>
 
-<div class="container">
-  <div id="map"></div>
+<div class="panel">
+  <div class="title">ARIGO • Mauritius</div>
 
-  <div class="panel">
-    <div class="route">
-      <div><b>Pickup:</b> <span id="pickup">Not selected</span></div>
-      <div><b>Dropoff:</b> <span id="dropoff">Not selected</span></div>
-      <div class="price" id="price">—</div>
-    </div>
-
-    <div class="passengers">
-      <div class="active" onclick="setPax(4)" id="p4">1-4 pax</div>
-      <div onclick="setPax(9)" id="p9">5-9 pax</div>
-    </div>
-
-    <input type="time" id="time" value="10:00">
-
-    <button onclick="book()">Book via WhatsApp</button>
+  <div class="route">
+    Pickup: <span id="pickup">Tap map</span><br>
+    Dropoff: <span id="dropoff">Tap again</span>
   </div>
+
+  <div class="price" id="price">Rs 0</div>
+
+  <button onclick="book()">Book via WhatsApp</button>
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-let map = L.map('map').setView([-20.28,57.57],10);
+let map = L.map('map',{zoomControl:false})
+.setView([-20.28,57.57],10);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  maxZoom:19
-}).addTo(map);
+// dark theme map
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-// generate 400 taxis
+// subtle taxi dots
 for(let i=0;i<400;i++){
   let lat=-20.6+Math.random()*0.8;
   let lng=57.3+Math.random()*0.8;
 
   L.circleMarker([lat,lng],{
-    radius:5,
-    color:"yellow"
+    radius:2,
+    color:"#ffd54f",
+    opacity:0.5
   }).addTo(map);
 }
 
 let pickup=null;
 let dropoff=null;
-let pax=4;
-
-function setPax(n){
-  pax=n;
-  document.getElementById("p4").classList.remove("active");
-  document.getElementById("p9").classList.remove("active");
-  document.getElementById("p"+n).classList.add("active");
-  calculate();
-}
+let line=null;
 
 map.on('click', function(e){
+
   if(!pickup){
     pickup=e.latlng;
-    document.getElementById("pickup").innerText=
-      pickup.lat.toFixed(3)+","+pickup.lng.toFixed(3);
-
     L.marker(pickup).addTo(map);
+    document.getElementById("pickup").innerText="Selected";
   }
+
   else if(!dropoff){
     dropoff=e.latlng;
-    document.getElementById("dropoff").innerText=
-      dropoff.lat.toFixed(3)+","+dropoff.lng.toFixed(3);
-
     L.marker(dropoff).addTo(map);
+    document.getElementById("dropoff").innerText="Selected";
+
+    drawLine();
+    calculate();
   }
+
   else{
-    pickup=e.latlng;
-    dropoff=null;
-    document.getElementById("pickup").innerText=
-      pickup.lat.toFixed(3)+","+pickup.lng.toFixed(3);
-    document.getElementById("dropoff").innerText="Not selected";
-    document.getElementById("price").innerText="—";
+    location.reload(); // reset clean
   }
-  calculate();
 });
+
+function drawLine(){
+  if(line) map.removeLayer(line);
+
+  line = L.polyline([pickup, dropoff], {
+    color: "#25D366",
+    weight: 4
+  }).addTo(map);
+}
 
 function distance(a,b){
   const R=6371;
   const dLat=(b.lat-a.lat)*Math.PI/180;
   const dLon=(b.lng-a.lng)*Math.PI/180;
-  const x=Math.sin(dLat/2)**2+
+
+  const x=Math.sin(dLat/2)**2 +
     Math.cos(a.lat*Math.PI/180)*
     Math.cos(b.lat*Math.PI/180)*
     Math.sin(dLon/2)**2;
+
   return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
 }
 
 function calculate(){
-  if(!pickup || !dropoff){
-    document.getElementById("price").innerText="—";
-    return;
-  }
+  let d = distance(pickup,dropoff);
+  let fare = Math.min(d*100,2000);
 
-  let d=distance(pickup,dropoff);
-  let fare=d*100;
-
-  if(pax===4) fare=Math.min(fare,2000);
-  else fare=Math.min(fare,3000);
-
-  document.getElementById("price").innerText="Rs "+Math.round(fare);
+  let priceEl = document.getElementById("price");
+  priceEl.innerText = "Rs " + Math.round(fare);
+  priceEl.style.display="block";
 }
 
 function book(){
   if(!pickup || !dropoff){
-    alert("Select pickup and dropoff");
+    alert("Select route");
     return;
   }
 
-  let time=document.getElementById("time").value;
-  let price=document.getElementById("price").innerText;
-
-  let msg=`Taxi booking:
-Pickup: ${document.getElementById("pickup").innerText}
-Dropoff: ${document.getElementById("dropoff").innerText}
-Passengers: ${pax}
-Time: ${time}
-Price: ${price}`;
+  let msg=`Taxi booking Mauritius:
+Pickup selected
+Dropoff selected
+Price: ${document.getElementById("price").innerText}`;
 
   window.open("https://wa.me/23059237053?text="+encodeURIComponent(msg));
 }
