@@ -1,22 +1,463 @@
-Your upgraded **CoolBuddy** website is ready! Here's everything it includes:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoolBuddy – Cattle Transport Mauritius</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root{
+  --gd:#0d2b0a;--gm:#1a4d12;--gl:#4a8c35;
+  --gold:#d4a017;--goldl:#f0c040;
+  --cream:#fdf6e3;--brown:#5c3318;
+  --wa:#25D366;--white:#fff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Barlow',sans-serif;background:var(--gd);color:var(--cream);overflow-x:hidden;}
 
-**🗺️ Interactive Map**
-- Full Leaflet map of Mauritius with 🐄 markers on every city
-- Click any marker → instantly selected + a line drawn from Albion
-- Search box to find any city by name
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;display:flex;align-items:center;justify-content:space-between;padding:.9rem 2rem;background:rgba(13,43,10,.94);backdrop-filter:blur(12px);border-bottom:1px solid rgba(212,160,23,.2);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--gold);letter-spacing:3px;}
+.nav-logo span{color:#fff;}
+.nav-links{display:flex;gap:1.5rem;align-items:center;}
+.nav-links a{color:rgba(255,255,255,.65);text-decoration:none;font-weight:600;font-size:.85rem;letter-spacing:1px;transition:color .2s;}
+.nav-links a:hover{color:var(--gold);}
+.nav-wa{background:var(--wa);color:#fff;text-decoration:none;padding:.45rem 1.1rem;border-radius:50px;font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:6px;transition:transform .2s,box-shadow .2s;}
+.nav-wa:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(37,211,102,.4);}
+@media(max-width:600px){.nav-links{display:none;}}
 
-**💰 Smart Price Calculator**
-- Pricing is **per cattle head**, calculated by real distance from Albion using GPS coordinates
-- 5 distance zones: Rs 600 → Rs 1,700 per head depending on how far
-- Quick buttons for 1 / 3 / 5 / 10 / 20 / 50 heads
-- Shows full breakdown + total instantly
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:7rem 2rem 4rem;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(74,140,53,.22) 0%,transparent 70%),linear-gradient(180deg,var(--gd) 0%,#0a1f08 100%);position:relative;overflow:hidden;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,160,23,.12);border:1px solid rgba(212,160,23,.35);color:var(--gold);font-size:.78rem;font-weight:700;letter-spacing:3px;padding:.4rem 1.2rem;border-radius:50px;margin-bottom:1.8rem;animation:fu .6s ease both;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,18vw,13rem);line-height:.88;letter-spacing:4px;color:#fff;animation:fu .6s .1s ease both;}
+.hero h1 em{color:var(--gold);font-style:normal;}
+.hero-tagline{font-size:clamp(.95rem,2.5vw,1.35rem);color:rgba(255,255,255,.6);margin-top:1.2rem;font-weight:500;animation:fu .6s .2s ease both;}
+.hero-actions{margin-top:2.5rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fu .6s .3s ease both;}
+.btn-gold{background:var(--gold);color:var(--gd);text-decoration:none;font-weight:800;font-size:1rem;padding:.85rem 2rem;border-radius:6px;transition:all .2s;box-shadow:0 4px 24px rgba(212,160,23,.3);}
+.btn-gold:hover{background:var(--goldl);transform:translateY(-3px);}
+.btn-ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.28);text-decoration:none;font-weight:700;font-size:1rem;padding:.85rem 2rem;border-radius:6px;transition:all .2s;}
+.btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.07);}
+.hero-stats{display:flex;gap:3rem;margin-top:3.5rem;flex-wrap:wrap;justify-content:center;animation:fu .6s .4s ease both;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--gold);line-height:1;}
+.stat-label{font-size:.72rem;color:rgba(255,255,255,.45);letter-spacing:2px;text-transform:uppercase;margin-top:.15rem;}
 
-**🎁 Bulk Discounts** (your rates, clearly shown)
-- 3–5 heads → 5% off
-- 6–10 heads → 10% off
-- 11–20 heads → 15% off
-- 21–50 heads → 20% off
-- 51+ heads → 25% off
+/* SECTIONS */
+.sw{padding:5rem 2rem;max-width:1100px;margin:0 auto;}
+.slabel{font-size:.72rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem;}
+.stitle{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,6vw,4rem);color:#fff;line-height:1;margin-bottom:2rem;}
 
-**📲 WhatsApp Booking**
-- After calculating, the "Book via WhatsApp" button opens a **pre-filled WhatsApp message** to +230 5923 7053 with the city, number of heads, and price — ready to send!
+/* CALC LAYOUT */
+#calculator{background:var(--gd);}
+.calc-layout{display:grid;grid-template-columns:1fr 390px;gap:2rem;align-items:start;}
+@media(max-width:900px){.calc-layout{grid-template-columns:1fr;}}
+#map{height:560px;border-radius:14px;overflow:hidden;border:2px solid rgba(212,160,23,.22);box-shadow:0 12px 48px rgba(0,0,0,.5);}
+
+/* PANEL */
+.panel{background:rgba(255,255,255,.04);border:1px solid rgba(212,160,23,.18);border-radius:14px;padding:1.8rem;backdrop-filter:blur(10px);position:sticky;top:88px;}
+.panel h3{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:#fff;letter-spacing:2px;margin-bottom:1.4rem;border-bottom:1px solid rgba(212,160,23,.18);padding-bottom:.9rem;}
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:.72rem;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:.35rem;}
+.csearch{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.13);color:#fff;padding:.65rem .9rem;border-radius:8px;font-family:'Barlow',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s;}
+.csearch:focus{border-color:var(--gold);}
+.csearch::placeholder{color:rgba(255,255,255,.28);}
+.cscroll{max-height:150px;overflow-y:auto;border:1px solid rgba(255,255,255,.09);border-radius:8px;margin-top:.4rem;}
+.cscroll::-webkit-scrollbar{width:4px;}
+.cscroll::-webkit-scrollbar-thumb{background:rgba(212,160,23,.4);border-radius:2px;}
+.citem{padding:.5rem .9rem;cursor:pointer;font-size:.88rem;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s;color:rgba(255,255,255,.72);display:flex;justify-content:space-between;align-items:center;}
+.citem:last-child{border-bottom:none;}
+.citem:hover,.citem.active{background:rgba(212,160,23,.14);color:var(--gold);}
+.cdist{font-size:.72rem;color:rgba(255,255,255,.32);}
+.citem.active .cdist{color:rgba(212,160,23,.6);}
+.sel-city{background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.3);border-radius:8px;padding:.65rem .9rem;min-height:44px;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--gold);font-size:.95rem;margin-top:.5rem;}
+.sel-city.empty{color:rgba(255,255,255,.3);font-weight:400;font-style:italic;font-size:.85rem;}
+
+/* HEADS */
+.hinput{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.13);color:#fff;padding:.65rem .9rem;border-radius:8px;font-family:'Barlow',sans-serif;font-size:1rem;outline:none;transition:border-color .2s;-moz-appearance:textfield;}
+.hinput:focus{border-color:var(--gold);}
+.hbadges{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.5rem;}
+.hbadge{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-size:.75rem;font-weight:700;padding:.22rem .55rem;border-radius:4px;cursor:pointer;transition:all .2s;}
+.hbadge:hover,.hbadge.active{background:var(--gold);color:var(--gd);border-color:var(--gold);}
+
+/* RESULT */
+.cresult{background:var(--gm);border-radius:10px;padding:1.3rem;margin-top:1rem;border:1px solid rgba(212,160,23,.25);display:none;}
+.cresult.show{display:block;animation:fu .3s ease;}
+.rrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;font-size:.88rem;color:rgba(255,255,255,.65);}
+.rrow strong{color:#fff;}
+.rdiv{border:none;border-top:1px solid rgba(255,255,255,.09);margin:.7rem 0;}
+.rtlabel{font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;}
+.rtotal{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;color:var(--goldl);line-height:1;margin:.15rem 0;}
+.rsave{font-size:.83rem;color:#66cc44;font-weight:600;}
+.rnote{font-size:.75rem;color:rgba(255,255,255,.38);margin-top:.4rem;}
+.btn-wa-book{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--wa);color:#fff;border:none;padding:.95rem;border-radius:8px;font-family:'Barlow',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;margin-top:.9rem;text-decoration:none;transition:all .2s;box-shadow:0 4px 18px rgba(37,211,102,.28);}
+.btn-wa-book:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(37,211,102,.45);}
+.btn-wa-book.disabled{opacity:.35;pointer-events:none;}
+
+/* DISCOUNTS */
+#discounts{background:#0a1f08;}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.9rem;}
+.dcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:1.4rem 1rem;text-align:center;transition:all .22s;position:relative;overflow:hidden;}
+.dcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);transform:scaleX(0);transition:transform .3s;}
+.dcard:hover{border-color:rgba(212,160,23,.38);transform:translateY(-4px);}
+.dcard:hover::before{transform:scaleX(1);}
+.dcard.best{border-color:rgba(212,160,23,.45);background:rgba(212,160,23,.07);}
+.dcard.best::before{transform:scaleX(1);}
+.dtag{position:absolute;top:7px;right:7px;background:var(--gold);color:var(--gd);font-size:.58rem;font-weight:800;letter-spacing:1px;padding:2px 5px;border-radius:3px;text-transform:uppercase;}
+.dheads{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#fff;letter-spacing:1px;}
+.dheads small{font-size:.9rem;color:rgba(255,255,255,.45);font-family:'Barlow',sans-serif;font-weight:600;}
+.dpct{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--gold);line-height:1;margin:.25rem 0;}
+.dlabel{font-size:.7rem;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;}
+
+/* PRICING TABLE */
+#pricing{background:var(--gd);}
+.ptable{width:100%;border-collapse:collapse;}
+.ptable th{text-align:left;padding:.7rem 1rem;font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);border-bottom:2px solid rgba(212,160,23,.25);}
+.ptable td{padding:.85rem 1rem;border-bottom:1px solid rgba(255,255,255,.06);font-size:.93rem;color:rgba(255,255,255,.78);}
+.ptable tr:hover td{background:rgba(212,160,23,.04);}
+.zbadge{display:inline-block;padding:.18rem .65rem;border-radius:4px;font-size:.72rem;font-weight:700;letter-spacing:1px;}
+.z1{background:rgba(74,140,53,.3);color:#90ee90;}
+.z2{background:rgba(212,160,23,.2);color:#f0c040;}
+.z3{background:rgba(180,100,20,.25);color:#f4a050;}
+.z4{background:rgba(180,40,40,.25);color:#f47070;}
+.z5{background:rgba(120,20,120,.25);color:#dd88dd;}
+
+/* CONTACT */
+#contact{background:#0a1f08;}
+.cinner{text-align:center;max-width:580px;margin:0 auto;}
+.phone-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,8vw,5.5rem);color:var(--gold);letter-spacing:4px;display:block;text-decoration:none;margin:1rem 0 2rem;transition:color .2s;}
+.phone-big:hover{color:var(--goldl);}
+.cbtns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+.btn-wa-lg{display:inline-flex;align-items:center;gap:10px;background:var(--wa);color:#fff;text-decoration:none;font-weight:800;font-size:1.05rem;padding:1rem 2.3rem;border-radius:50px;box-shadow:0 6px 22px rgba(37,211,102,.32);transition:all .2s;}
+.btn-wa-lg:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(37,211,102,.48);}
+.btn-call-lg{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);color:#fff;text-decoration:none;font-weight:700;font-size:1.05rem;padding:1rem 2.3rem;border-radius:50px;border:2px solid rgba(255,255,255,.18);transition:all .2s;}
+.btn-call-lg:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.48);}
+
+footer{background:var(--gd);border-top:1px solid rgba(212,160,23,.12);padding:1.8rem;text-align:center;}
+footer p{color:rgba(255,255,255,.28);font-size:.82rem;}
+footer strong{color:var(--gold);}
+
+/* Leaflet marker */
+.cow-m{font-size:1.3rem;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));cursor:pointer;}
+.albion-m{font-size:1.5rem;}
+
+@keyframes fu{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">COOL<span>BUDDY</span></div>
+  <div class="nav-links">
+    <a href="#calculator">Calculate</a>
+    <a href="#discounts">Discounts</a>
+    <a href="#pricing">Zones</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="https://wa.me/23059237053" class="nav-wa" target="_blank">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    WhatsApp
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🐄 MAURITIUS CATTLE TRANSPORT</div>
+  <h1>COOL<em>BUDDY</em></h1>
+  <p class="hero-tagline">Professional Cattle Transport — Albion to Every City in Mauritius</p>
+  <div class="hero-actions">
+    <a href="#calculator" class="btn-gold">📍 Calculate My Price</a>
+    <a href="https://wa.me/23059237053" class="btn-ghost" target="_blank">💬 WhatsApp Now</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">45+</div><div class="stat-label">Cities Served</div></div>
+    <div class="stat"><div class="stat-num">25%</div><div class="stat-label">Max Discount</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Available</div></div>
+    <div class="stat"><div class="stat-num">Rs600</div><div class="stat-label">From / Head</div></div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section id="calculator">
+<div class="sw">
+  <p class="slabel">🗺️ Interactive Price Calculator</p>
+  <h2 class="stitle">Pick Any City —<br>Get Instant Price</h2>
+  <div class="calc-layout">
+
+    <div id="map"></div>
+
+    <div class="panel">
+      <h3>🐄 Price Calculator</h3>
+
+      <div class="field">
+        <label>📍 Search or Click Destination</label>
+        <input class="csearch" id="csearch" placeholder="Type city name…" autocomplete="off">
+        <div class="cscroll" id="clist"></div>
+        <div class="sel-city empty" id="selDisplay">← Click a 🐄 marker or search above</div>
+      </div>
+
+      <div class="field">
+        <label>🐮 Number of Cattle Heads</label>
+        <input class="hinput" type="number" id="hinput" min="1" max="999" value="1">
+        <div class="hbadges">
+          <span class="hbadge" data-n="1">1</span>
+          <span class="hbadge" data-n="3">3</span>
+          <span class="hbadge" data-n="5">5</span>
+          <span class="hbadge" data-n="10">10</span>
+          <span class="hbadge" data-n="20">20</span>
+          <span class="hbadge" data-n="50">50+</span>
+        </div>
+      </div>
+
+      <div class="cresult" id="cresult">
+        <div class="rrow"><span>From</span><strong>Albion</strong></div>
+        <div class="rrow"><span>To</span><strong id="rCity">—</strong></div>
+        <div class="rrow"><span>Distance</span><strong id="rDist">—</strong></div>
+        <div class="rrow"><span>Rate / Head</span><strong id="rPPH">—</strong></div>
+        <div class="rrow"><span>Heads</span><strong id="rH">—</strong></div>
+        <div class="rrow"><span>Discount</span><strong id="rDisc" style="color:#66cc44;">—</strong></div>
+        <hr class="rdiv">
+        <div class="rtlabel">TOTAL PRICE</div>
+        <div class="rtotal" id="rTotal">—</div>
+        <div class="rsave" id="rSave"></div>
+        <div class="rnote">* Estimate — confirmed on booking.</div>
+      </div>
+
+      <a href="#" class="btn-wa-book disabled" id="waBtn" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Book via WhatsApp
+      </a>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- DISCOUNTS -->
+<section id="discounts">
+<div class="sw">
+  <p class="slabel">💰 Bulk Discounts</p>
+  <h2 class="stitle">More Cattle = More Savings</h2>
+  <div class="dgrid">
+    <div class="dcard"><div class="dheads">1–2 <small>heads</small></div><div class="dpct">0%</div><div class="dlabel">Standard</div></div>
+    <div class="dcard"><div class="dheads">3–5 <small>heads</small></div><div class="dpct">5%</div><div class="dlabel">Starter</div></div>
+    <div class="dcard"><div class="dheads">6–10 <small>heads</small></div><div class="dpct">10%</div><div class="dlabel">Group</div></div>
+    <div class="dcard best"><div class="dtag">POPULAR</div><div class="dheads">11–20 <small>heads</small></div><div class="dpct">15%</div><div class="dlabel">Herd Rate</div></div>
+    <div class="dcard"><div class="dheads">21–50 <small>heads</small></div><div class="dpct">20%</div><div class="dlabel">Bulk</div></div>
+    <div class="dcard best"><div class="dtag">BEST</div><div class="dheads">51+ <small>heads</small></div><div class="dpct">25%</div><div class="dlabel">Mega Herd</div></div>
+  </div>
+</div>
+</section>
+
+<!-- PRICING ZONES -->
+<section id="pricing">
+<div class="sw">
+  <p class="slabel">📊 Distance Zones — from Albion</p>
+  <h2 class="stitle">Transparent Rates<br>Per Cattle Head</h2>
+  <table class="ptable">
+    <thead><tr><th>Zone</th><th>Distance</th><th>Example Cities</th><th>Rate / Head</th></tr></thead>
+    <tbody>
+      <tr><td><span class="zbadge z1">ZONE 1</span></td><td>0–10 km</td><td>Flic en Flac, Bambous, Tamarin</td><td><strong>Rs 600</strong></td></tr>
+      <tr><td><span class="zbadge z2">ZONE 2</span></td><td>10–20 km</td><td>Port Louis, Quatre Bornes, Baie du Tombeau, Pamplemousses</td><td><strong>Rs 850</strong></td></tr>
+      <tr><td><span class="zbadge z3">ZONE 3</span></td><td>20–35 km</td><td>Curepipe, Vacoas, Moka, Grand Baie, Triolet, Floréal</td><td><strong>Rs 1,100</strong></td></tr>
+      <tr><td><span class="zbadge z4">ZONE 4</span></td><td>35–50 km</td><td>Centre de Flacq, Rose Belle, Mahebourg, Goodlands</td><td><strong>Rs 1,400</strong></td></tr>
+      <tr><td><span class="zbadge z5">ZONE 5</span></td><td>50+ km</td><td>Souillac, Le Morne, Cap Malheureux, Rivière des Anguilles</td><td><strong>Rs 1,700</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+<div class="sw">
+  <div class="cinner">
+    <p class="slabel">📞 Get In Touch</p>
+    <h2 class="stitle">Book Your Transport</h2>
+    <p style="color:rgba(255,255,255,.55);font-size:1.05rem;margin-bottom:.4rem;">7 days a week — fast response!</p>
+    <a href="tel:+23059237053" class="phone-big">+230 5923 7053</a>
+    <div class="cbtns">
+      <a href="https://wa.me/23059237053?text=Hello%20CoolBuddy!%20I%20need%20cattle%20transport." class="btn-wa-lg" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Chat on WhatsApp
+      </a>
+      <a href="tel:+23059237053" class="btn-call-lg">📞 Call Us</a>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer><p>© 2026 <strong>CoolBuddy</strong> — Cattle Transport Mauritius &nbsp;|&nbsp; <strong>+230 5923 7053</strong></p></footer>
+
+<script>
+// ══ DATA ══
+const ALBION = {lat:-20.1964,lng:57.3833};
+const CITIES = [
+  {name:'Albion',lat:-20.1964,lng:57.3833},
+  {name:'Bambous',lat:-20.2333,lng:57.4167},
+  {name:'Baie du Tombeau',lat:-20.1167,lng:57.5000},
+  {name:'Beau Bassin',lat:-20.2330,lng:57.4667},
+  {name:'Bel Air',lat:-20.2167,lng:57.6833},
+  {name:'Bois des Amourettes',lat:-20.4500,lng:57.7167},
+  {name:'Cap Malheureux',lat:-19.9833,lng:57.6167},
+  {name:'Centre de Flacq',lat:-20.1833,lng:57.7167},
+  {name:'Chamarel',lat:-20.4167,lng:57.3667},
+  {name:'Chemin Grenier',lat:-20.4500,lng:57.4500},
+  {name:'Curepipe',lat:-20.3174,lng:57.5132},
+  {name:'Ebène',lat:-20.2400,lng:57.4850},
+  {name:'Flic en Flac',lat:-20.2667,lng:57.3667},
+  {name:'Floréal',lat:-20.3000,lng:57.5167},
+  {name:'Goodlands',lat:-20.0167,lng:57.6500},
+  {name:'Grand Baie',lat:-20.0133,lng:57.5800},
+  {name:'Le Morne',lat:-20.4667,lng:57.3167},
+  {name:'Mahebourg',lat:-20.4000,lng:57.7000},
+  {name:'Mapou',lat:-20.0167,lng:57.6333},
+  {name:'Midlands',lat:-20.2700,lng:57.5600},
+  {name:'Moka',lat:-20.2333,lng:57.5333},
+  {name:'Mont Choisy',lat:-20.0167,lng:57.5500},
+  {name:'Nouvelle France',lat:-20.3333,lng:57.5000},
+  {name:'Pamplemousses',lat:-20.0978,lng:57.5767},
+  {name:'Pereybere',lat:-19.9833,lng:57.5833},
+  {name:'Phoenix',lat:-20.2870,lng:57.5020},
+  {name:'Piton',lat:-20.1833,lng:57.5333},
+  {name:'Plaine Magnien',lat:-20.3833,lng:57.6833},
+  {name:'Pointe aux Piments',lat:-20.0833,lng:57.5167},
+  {name:'Port Louis',lat:-20.1609,lng:57.4991},
+  {name:'Quatre Bornes',lat:-20.2650,lng:57.4800},
+  {name:'Quartier Militaire',lat:-20.2500,lng:57.5667},
+  {name:'Rivière des Anguilles',lat:-20.4833,lng:57.5667},
+  {name:'Rivière du Rempart',lat:-20.1167,lng:57.6833},
+  {name:'Rivière Noire',lat:-20.3667,lng:57.3667},
+  {name:'Roche Bois',lat:-20.1500,lng:57.5000},
+  {name:'Rose Belle',lat:-20.3833,lng:57.6167},
+  {name:'Rose Hill',lat:-20.2400,lng:57.4600},
+  {name:'Saint Pierre',lat:-20.3000,lng:57.4833},
+  {name:'Savanne',lat:-20.4833,lng:57.5000},
+  {name:'Souillac',lat:-20.5167,lng:57.5167},
+  {name:'Surinam',lat:-20.3333,lng:57.5667},
+  {name:'Tamarin',lat:-20.3333,lng:57.3667},
+  {name:'Triolet',lat:-20.0500,lng:57.5333},
+  {name:'Trou aux Biches',lat:-20.0333,lng:57.5333},
+  {name:'Vacoas',lat:-20.2980,lng:57.4940},
+].sort((a,b)=>a.name.localeCompare(b.name));
+
+// ══ HELPERS ══
+function hav(la1,lo1,la2,lo2){
+  const R=6371,d2r=Math.PI/180;
+  const dlat=(la2-la1)*d2r,dlng=(lo2-lo1)*d2r;
+  const a=Math.sin(dlat/2)**2+Math.cos(la1*d2r)*Math.cos(la2*d2r)*Math.sin(dlng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function pph(d){if(d<=10)return 600;if(d<=20)return 850;if(d<=35)return 1100;if(d<=50)return 1400;return 1700;}
+function disc(h){if(h>=51)return.25;if(h>=21)return.20;if(h>=11)return.15;if(h>=6)return.10;if(h>=3)return.05;return 0;}
+function fmt(n){return'Rs '+Math.round(n).toLocaleString();}
+
+// Attach distance to each city
+CITIES.forEach(c=>{c.dist=hav(ALBION.lat,ALBION.lng,c.lat,c.lng);});
+
+// ══ MAP ══
+const map=L.map('map',{zoomControl:true}).setView([-20.27,57.55],10);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© CartoDB',maxZoom:14}).addTo(map);
+
+const iCow=L.divIcon({className:'',html:'<div class="cow-m">🐄</div>',iconSize:[22,22],iconAnchor:[11,11]});
+const iCowSel=L.divIcon({className:'',html:'<div class="cow-m" style="font-size:2rem;filter:drop-shadow(0 0 8px #d4a017)">🐄</div>',iconSize:[32,32],iconAnchor:[16,16]});
+const iHome=L.divIcon({className:'',html:'<div class="albion-m">🏠</div>',iconSize:[26,26],iconAnchor:[13,13]});
+
+L.marker([ALBION.lat,ALBION.lng],{icon:iHome}).addTo(map)
+  .bindPopup('<b style="color:#d4a017">📍 ALBION — Start</b>').openPopup();
+
+let selMarker=null,lineLayer=null,curCity=null;
+const markerMap={};
+
+CITIES.forEach(city=>{
+  if(city.name==='Albion') return;
+  const m=L.marker([city.lat,city.lng],{icon:iCow})
+    .addTo(map)
+    .bindTooltip(city.name,{permanent:false,direction:'top'});
+  m.on('click',()=>selectCity(city,m));
+  markerMap[city.name]=m;
+});
+
+function selectCity(city,m){
+  if(selMarker) selMarker.setIcon(iCow);
+  m.setIcon(iCowSel);
+  selMarker=m;
+  if(lineLayer) map.removeLayer(lineLayer);
+  lineLayer=L.polyline([[ALBION.lat,ALBION.lng],[city.lat,city.lng]],{color:'#d4a017',weight:2,dashArray:'6 6',opacity:.85}).addTo(map);
+  curCity=city;
+  const d=document.getElementById('selDisplay');
+  d.className='sel-city';
+  d.innerHTML=`📍 <strong>${city.name}</strong> &nbsp;|&nbsp; ~${city.dist.toFixed(1)} km`;
+  document.querySelectorAll('.citem').forEach(el=>el.classList.remove('active'));
+  const li=document.querySelector(`.citem[data-name="${city.name}"]`);
+  if(li){li.classList.add('active');li.scrollIntoView({block:'nearest'});}
+  calc();
+}
+
+// ══ CITY LIST ══
+function buildList(q){
+  const el=document.getElementById('clist');
+  el.innerHTML='';
+  const filt=q?CITIES.filter(c=>c.name.toLowerCase().includes(q.toLowerCase())):CITIES;
+  filt.forEach(city=>{
+    if(city.name==='Albion') return;
+    const div=document.createElement('div');
+    div.className='citem'+(curCity&&curCity.name===city.name?' active':'');
+    div.dataset.name=city.name;
+    div.innerHTML=`<span>${city.name}</span><span class="cdist">~${city.dist.toFixed(0)} km</span>`;
+    div.addEventListener('click',()=>{
+      const m=markerMap[city.name];
+      if(m){map.setView([city.lat,city.lng],12);selectCity(city,m);}
+    });
+    el.appendChild(div);
+  });
+}
+buildList('');
+document.getElementById('csearch').addEventListener('input',e=>buildList(e.target.value));
+
+// ══ HEADS BADGES ══
+document.querySelectorAll('.hbadge').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.hbadge').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const v=b.dataset.n==='50+'?50:+b.dataset.n;
+    document.getElementById('hinput').value=v;
+    calc();
+  });
+});
+document.getElementById('hinput').addEventListener('input',()=>{
+  document.querySelectorAll('.hbadge').forEach(x=>x.classList.remove('active'));
+  calc();
+});
+
+// ══ CALCULATE ══
+function calc(){
+  if(!curCity) return;
+  const heads=Math.max(1,parseInt(document.getElementById('hinput').value)||1);
+  const d=curCity.dist;
+  const rate=pph(d);
+  const dk=disc(heads);
+  const gross=rate*heads;
+  const saved=gross*dk;
+  const total=gross-saved;
+
+  document.getElementById('rCity').textContent=curCity.name;
+  document.getElementById('rDist').textContent='~'+d.toFixed(1)+' km';
+  document.getElementById('rPPH').textContent=fmt(rate)+'/head';
+  document.getElementById('rH').textContent=heads+' head'+(heads>1?'s':'');
+  document.getElementById('rDisc').textContent=dk>0?(dk*100)+'% OFF':'None';
+  document.getElementById('rTotal').textContent=fmt(total);
+  document.getElementById('rSave').textContent=saved>0?'✅ You save '+fmt(saved)+'!':'';
+
+  document.getElementById('cresult').classList.add('show');
+
+  const msg=encodeURIComponent(
+    `Hello CoolBuddy! 🐄\n\nTransport Request:\n📍 From: Albion\n📍 To: ${curCity.name}\n🐮 Heads: ${heads}\n💰 Estimate: ${fmt(total)}\n\nPlease confirm!`
+  );
+  const btn=document.getElementById('waBtn');
+  btn.href=`https://wa.me/23059237053?text=${msg}`;
+  btn.classList.remove('disabled');
+}
+</script>
+</body>
+</html>
