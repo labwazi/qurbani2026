@@ -1,173 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taxi Mauritius Premium</title>
+Your upgraded **CoolBuddy** website is ready! Here's everything it includes:
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+**🗺️ Interactive Map**
+- Full Leaflet map of Mauritius with 🐄 markers on every city
+- Click any marker → instantly selected + a line drawn from Albion
+- Search box to find any city by name
 
-<style>
-body{font-family:Arial;margin:0;background:#f0f4f7}
-.container{max-width:750px;margin:20px auto;background:#fff;padding:20px;border-radius:15px;box-shadow:0 6px 15px rgba(0,0,0,0.15)}
-h2{text-align:center;color:#2c3e50}
-#map{height:400px;border-radius:15px;margin-bottom:15px;box-shadow:0 4px 10px rgba(0,0,0,0.2)}
-input,select,textarea{width:100%;padding:12px;margin-top:5px;border-radius:8px;border:1px solid #ccc;font-size:1em}
-label{font-weight:bold;margin-top:10px;display:block;color:#34495e}
-button{margin-top:10px;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:bold}
-.primary{background:#25D366;color:#fff;width:100%;font-size:1.1em}
-.secondary{background:#3498db;color:#fff;width:100%;font-size:1em}
-.price{background:#dff5e1;padding:15px;text-align:center;font-weight:bold;margin-top:15px;border-radius:8px;font-size:1.2em}
-.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-top:10px}
-.quick button{background:#eee;padding:8px;border-radius:6px}
-</style>
-</head>
+**💰 Smart Price Calculator**
+- Pricing is **per cattle head**, calculated by real distance from Albion using GPS coordinates
+- 5 distance zones: Rs 600 → Rs 1,700 per head depending on how far
+- Quick buttons for 1 / 3 / 5 / 10 / 20 / 50 heads
+- Shows full breakdown + total instantly
 
-<body>
-<div class="container">
-<h2>🚖 Mauritius Taxi Premium Booking</h2>
+**🎁 Bulk Discounts** (your rates, clearly shown)
+- 3–5 heads → 5% off
+- 6–10 heads → 10% off
+- 11–20 heads → 15% off
+- 21–50 heads → 20% off
+- 51+ heads → 25% off
 
-<div id="map"></div>
-
-<label>Pickup</label>
-<input id="pickup" readonly placeholder="Click on map to select pickup">
-
-<label>Drop-off</label>
-<input id="dropoff" readonly placeholder="Click on map to select drop-off">
-
-<div class="quick">
-<button onclick="setDropoff('SSR Airport')">Airport</button>
-<button onclick="setDropoff('Port Louis')">Port Louis</button>
-<button onclick="setDropoff('Grand Baie')">Grand Baie</button>
-<button onclick="setDropoff('Flic en Flac')">Flic en Flac</button>
-<button onclick="setDropoff('Curepipe')">Curepipe</button>
-<button onclick="setDropoff('Mahebourg')">Mahebourg</button>
-</div>
-
-<label>Date & Time</label>
-<input type="datetime-local" id="datetime">
-
-<label>Passengers</label>
-<select id="passengers">
-<option>1</option><option>2</option><option>3</option>
-<option>4</option><option>5</option><option>6</option>
-<option>7</option><option>8</option>
-</select>
-
-<label>Vehicle</label>
-<select id="vehicle" onchange="calculatePrice()">
-<option value="Standard">Standard</option>
-<option value="SUV">SUV</option>
-<option value="Premium">Premium</option>
-</select>
-
-<label>Notes</label>
-<textarea id="notes"></textarea>
-
-<div class="price" id="price">Estimated: MUR 0</div>
-
-<button onclick="calculateRoute()" class="secondary">Confirm Route & Calculate Price</button>
-<button onclick="sendWhatsApp()" class="primary">Book via WhatsApp</button>
-</div>
-
-<script>
-let map = L.map('map').setView([-20.2,57.5],11);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
-
-let pickupMarker=null, dropoffMarker=null, routingControl=null;
-let distanceKm=0;
-
-const baseFare=150;
-const perKm=45;
-
-map.on('click', function(e){
-  if(!pickupMarker){
-    pickupMarker=L.marker(e.latlng,{draggable:true}).addTo(map);
-    document.getElementById('pickup').value=e.latlng.lat.toFixed(5)+','+e.latlng.lng.toFixed(5);
-    pickupMarker.on('dragend',()=>{
-      document.getElementById('pickup').value=pickupMarker.getLatLng().lat.toFixed(5)+','+pickupMarker.getLatLng().lng.toFixed(5);
-    });
-  } else if(!dropoffMarker){
-    dropoffMarker=L.marker(e.latlng,{draggable:true,icon:new L.Icon.Default()}).addTo(map);
-    document.getElementById('dropoff').value=e.latlng.lat.toFixed(5)+','+e.latlng.lng.toFixed(5);
-    dropoffMarker.on('dragend',()=>{
-      document.getElementById('dropoff').value=dropoffMarker.getLatLng().lat.toFixed(5)+','+dropoffMarker.getLatLng().lng.toFixed(5);
-    });
-  }
-});
-
-function setDropoff(place){
-  document.getElementById('dropoff').value=place;
-}
-
-async function geocode(place){
-  if(place.includes(',')){
-    let parts=place.split(',');
-    return [parseFloat(parts[0]),parseFloat(parts[1])];
-  }
-  const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${place}, Mauritius`);
-  const data=await res.json();
-  if(data.length===0) return null;
-  return [parseFloat(data[0].lat),parseFloat(data[0].lon)];
-}
-
-async function calculateRoute(){
-  const p=document.getElementById('pickup').value;
-  const d=document.getElementById('dropoff').value;
-  if(!p||!d){alert('Select pickup and drop-off');return;}
-  const start=await geocode(p);
-  const end=await geocode(d);
-  if(!start||!end){alert('Location not found');return;}
-
-  if(routingControl) map.removeControl(routingControl);
-  routingControl=L.Routing.control({waypoints:[L.latLng(start),L.latLng(end)], routeWhileDragging:true}).addTo(map);
-
-  routingControl.on('routesfound', function(e){
-    const route=e.routes[0];
-    distanceKm=route.summary.totalDistance/1000;
-    calculatePrice();
-  });
-}
-
-function calculatePrice(){
-  if(distanceKm===0) return;
-  let total=0;
-  const d=document.getElementById('dropoff').value;
-  const passengers=parseInt(document.getElementById('passengers').value);
-  if(d==='SSR Airport'){ total=2000; } // Fixed price for airport for 4 persons
-  else{
-    let mult=1;
-    const v=document.getElementById('vehicle').value;
-    if(v==='SUV') mult=1.5;
-    if(v==='Premium') mult=2;
-    const dt=document.getElementById('datetime').value;
-    let night=1;
-    if(dt){const h=new Date(dt).getHours(); if(h>=22||h<6) night=1.2;}
-    total=Math.round(baseFare+distanceKm*perKm*mult*night);
-  }
-  document.getElementById('price').innerText='Estimated: MUR '+total;
-  document.getElementById('price').dataset.price=total;
-}
-
-function sendWhatsApp(){
-  const p=document.getElementById('pickup').value;
-  const d=document.getElementById('dropoff').value;
-  const dt=document.getElementById('datetime').value;
-  const pass=document.getElementById('passengers').value;
-  const veh=document.getElementById('vehicle').value;
-  const notes=document.getElementById('notes').value;
-  const price=document.getElementById('price').dataset.price||'TBC';
-  if(!p||!d){alert('Select pickup and drop-off');return;}
-  let msg='🚖 Taxi Booking%0A📍 Pickup: '+p+'%0A🏁 Drop: '+d+'%0A📅 Time: '+dt+'%0A👥 Pax: '+pass+'%0A🚗 Vehicle: '+veh+'%0A💰 Price: MUR '+price+'%0A';
-  if(notes) msg+='📝 Notes: '+notes;
-  window.open('https://wa.me/23059237053?text='+msg,'_blank');
-}
-</script>
-</body>
-</html>
+**📲 WhatsApp Booking**
+- After calculating, the "Book via WhatsApp" button opens a **pre-filled WhatsApp message** to +230 5923 7053 with the city, number of heads, and price — ready to send!
